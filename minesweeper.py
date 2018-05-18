@@ -21,11 +21,13 @@ def createBeginnerTrueFalseMatrix(height, width, mineCount):
 
     return matrix
 
+
 def isValidTile(matrix, x, y):
     """ validates that x and y are within grid """
     if x >= 0 and x < len(matrix) and y >= 0 and y < len(matrix[0]):
         return True
     return False
+
 
 def changeIfValid(newMatrix, x, y):
     """ validates that x and y are within grid and not a bomb """
@@ -36,7 +38,8 @@ def changeIfValid(newMatrix, x, y):
 
 
 def revealIfValid(numberMatrix, blankMatrix, x, y):
-    if isValidTile(blankMatrix, x, y) and not numberMatrix[x][y] == '!' and blankMatrix[x][y] == '?':
+    """ checks that x,y is a valid tile, not a bomb, not yet selected and reveals the tile """
+    if isValidTile(blankMatrix, x, y) and numberMatrix[x][y] != '!' and blankMatrix[x][y] == '?':
         if numberMatrix[x][y] == 0:
             blankMatrix[x][y] = ' '
             revealNeighbors(numberMatrix, blankMatrix, x, y)
