@@ -108,15 +108,16 @@ def placeFlag():
     return False
 
 
-def revealClick(height, width, numberMatrix, blankMatrix):
+def revealClick(height, width, numberMatrix, blankMatrix, flagCount):
     """ processes the user input to reveal a tile or place a flag """
     x, y = getNextMove(height, width)
 
     if placeFlag():
         blankMatrix[x][y] = 'F'
-        return True
+        flagCount += 1
+        return flagCount, True
     if numberMatrix[x][y] == '!':
-        return False
+        return flagCount, False
     elif numberMatrix[x][y] == 0:
         blankMatrix[x][y] = ' '
         # reveal neighbors
@@ -124,11 +125,11 @@ def revealClick(height, width, numberMatrix, blankMatrix):
     else:
         blankMatrix[x][y] = numberMatrix[x][y]
 
-    return True
+    return flagCount, True
 
 
 def revealNeighbors(numberMatrix, blankMatrix, x, y):
-    """ selects the neighbors or a selection for revealing """
+    """ selects the neighbors of a selection for revealing """
     revealIfValid(numberMatrix, blankMatrix, x  , y-1)
     revealIfValid(numberMatrix, blankMatrix, x  , y+1)
     revealIfValid(numberMatrix, blankMatrix, x+1, y  )
@@ -156,15 +157,19 @@ def playGame(height, width, mineCount):
     blankMatrix   = createNewBlankMatrix(preMatrix)
 
     gameRunning   = True
+    flagCount = 0
 
     while gameRunning:
-        if revealClick(height, width, numberMatrix, blankMatrix):
+        flagCount, wasRevealed = revealClick(height, width, numberMatrix, blankMatrix, flagCount)
+        print flagCount
+        print mineCount
+        if wasRevealed:
             print tabulateMatrix(blankMatrix)
-            flagCount = 0
-            for array in blankMatrix:
-                for item in array:
-                    if item == 'F':
-                        flagCount += 1
+            # flagCount = 0
+            # for array in blankMatrix:
+            #     for item in array:
+            #         if item == 'F':
+            #             flagCount += 1
             if mineCount == flagCount:
                 gameRunning = False
                 print 'You Won!'
