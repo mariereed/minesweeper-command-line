@@ -120,7 +120,6 @@ def revealClick(height, width, numberMatrix, blankMatrix, flagCount):
         return flagCount, False
     elif numberMatrix[x][y] == 0:
         blankMatrix[x][y] = ' '
-        # reveal neighbors
         revealNeighbors(numberMatrix, blankMatrix, x, y)
     else:
         blankMatrix[x][y] = numberMatrix[x][y]
@@ -157,19 +156,12 @@ def playGame(height, width, mineCount):
     blankMatrix   = createNewBlankMatrix(preMatrix)
 
     gameRunning   = True
-    flagCount = 0
+    flagCount     = 0
 
     while gameRunning:
         flagCount, wasRevealed = revealClick(height, width, numberMatrix, blankMatrix, flagCount)
-        print flagCount
-        print mineCount
         if wasRevealed:
             print tabulateMatrix(blankMatrix)
-            # flagCount = 0
-            # for array in blankMatrix:
-            #     for item in array:
-            #         if item == 'F':
-            #             flagCount += 1
             if mineCount == flagCount:
                 gameRunning = False
                 print 'You Won!'
