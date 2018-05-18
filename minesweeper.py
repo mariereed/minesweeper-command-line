@@ -21,11 +21,27 @@ def createBeginnerTrueFalseMatrix(height, width, mineCount):
 
     return matrix
 
+def isValidTile(matrix, x, y):
+    """ validates that x and y are within grid """
+    if x >= 0 and x < len(matrix) and y >= 0 and y < len(matrix[0]):
+        return True
+    return False
 
 def changeIfValid(newMatrix, x, y):
     """ validates that x and y are within grid and not a bomb """
-    if x >= 0 and x < len(newMatrix) and y >= 0 and y < len(newMatrix[0]) and newMatrix[x][y] != '!':
+    if isValidTile(newMatrix, x, y) and newMatrix[x][y] != '!':
         newMatrix[x][y] += 1
+        return True
+    return False
+
+
+def revealIfValid(numberMatrix, blankMatrix, x, y):
+    if isValidTile(blankMatrix, x, y) and not numberMatrix[x][y] == '!' and blankMatrix[x][y] == '?':
+        if numberMatrix[x][y] == 0:
+            blankMatrix[x][y] = ' '
+            revealNeighbors(numberMatrix, blankMatrix, x, y)
+        else:
+            blankMatrix[x][y] = numberMatrix[x][y]
         return True
     return False
 
@@ -118,17 +134,6 @@ def revealNeighbors(numberMatrix, blankMatrix, x, y):
     revealIfValid(numberMatrix, blankMatrix, x-1, y  )
     revealIfValid(numberMatrix, blankMatrix, x-1, y-1)
     revealIfValid(numberMatrix, blankMatrix, x-1, y+1)
-
-
-def revealIfValid(numberMatrix, blankMatrix, x, y):
-    if x >= 0 and x < len(blankMatrix) and y >= 0 and y < len(blankMatrix[0]) and not numberMatrix[x][y] == '!' and blankMatrix[x][y] == '?':
-        if numberMatrix[x][y] == 0:
-            blankMatrix[x][y] = ' '
-            revealNeighbors(numberMatrix, blankMatrix, x, y)
-        else:
-            blankMatrix[x][y] = numberMatrix[x][y]
-        return True
-    return False
 
 
 def revealEndBoard(numberMatrix, currentBoard):
