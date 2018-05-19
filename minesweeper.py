@@ -93,10 +93,18 @@ def tabulateMatrix(matrix):
     return tabulate(matrix, tablefmt="fancy_grid")
 
 
+def isNumber(input):
+    try:
+        int(input)
+        return int(input) - 1
+    except ValueError:
+        return False
+
+
 def getNextMove(height, width):
     """ retrieves user input for tile selection """
-    x = int(raw_input('enter a row number 1-{}: '.format(width)))-1
-    y = int(raw_input('enter a column number 1-{}: '.format(height)))-1
+    x = isNumber(raw_input('enter a row number 1-{}: '.format(width)))
+    y = isNumber(raw_input('enter a column number 1-{}: '.format(height)))
     return (x, y)
 
 
@@ -112,19 +120,22 @@ def revealClick(height, width, numberMatrix, blankMatrix, flagCount):
     """ processes the user input to reveal a tile or place a flag """
     x, y = getNextMove(height, width)
 
-    if placeFlag():
-        blankMatrix[x][y] = 'F'
-        flagCount += 1
+    if x is not False and y is not False:
+        if placeFlag():
+            blankMatrix[x][y] = 'F'
+            flagCount += 1
+            return flagCount, True
+        elif numberMatrix[x][y] == '!':
+            return flagCount, False
+        elif numberMatrix[x][y] == 0:
+            blankMatrix[x][y] = ' '
+            revealNeighbors(numberMatrix, blankMatrix, x, y)
+        else:
+            blankMatrix[x][y] = numberMatrix[x][y]
         return flagCount, True
-    if numberMatrix[x][y] == '!':
-        return flagCount, False
-    elif numberMatrix[x][y] == 0:
-        blankMatrix[x][y] = ' '
-        revealNeighbors(numberMatrix, blankMatrix, x, y)
     else:
-        blankMatrix[x][y] = numberMatrix[x][y]
-
-    return flagCount, True
+        print 'Please provide a valid number!'
+        return revealClick(height, width, numberMatrix, blankMatrix, flagCount)
 
 
 def revealNeighbors(numberMatrix, blankMatrix, x, y):
@@ -180,7 +191,6 @@ def playGame(height, width, mineCount):
     flagCount     = 0
 
     printInstructions()
-
     while gameRunning:
         flagCount, wasRevealed = revealClick(height, width, numberMatrix, blankMatrix, flagCount)
         if wasRevealed:
@@ -195,8 +205,8 @@ def playGame(height, width, mineCount):
             print 'Game Over, you hit a mine!'
             print tabulateMatrix(revealEndBoard(numberMatrix, blankMatrix))
 
-    doOver = raw_input('Play again?').lower()
+    doOver = raw_input('Play again? ').lower()
     if doOver == 'yes' or doOver == 'y':
         playGame(height, width, mineCount)
 
-playGame(3, 3, 1)
+playGame(4, 4, 5)
