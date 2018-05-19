@@ -95,7 +95,6 @@ def tabulateMatrix(matrix):
 
 def isNumber(input):
     try:
-        int(input)
         return int(input) - 1
     except ValueError:
         return False
@@ -105,7 +104,7 @@ def getNextMove(height, width, numberMatrix):
     """ retrieves user input for tile selection """
     x = isNumber(raw_input('enter a row number 1-{}: '.format(width)))
     y = isNumber(raw_input('enter a column number 1-{}: '.format(height)))
-    if x and y and isValidTile(numberMatrix, x, y):
+    if x is not False and y is not False and isValidTile(numberMatrix, x, y):
         return x, y
     return False, False
 
