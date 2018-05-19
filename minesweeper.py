@@ -139,13 +139,34 @@ def revealNeighbors(numberMatrix, blankMatrix, x, y):
     revealIfValid(numberMatrix, blankMatrix, x-1, y+1)
 
 
+def revealWinningBoard(matrix):
+    withBlanksBoard = [[' ' if x == 0 else x for x in y] for y in matrix]
+    withFlagsBoard = [['F' if x == '!' else x for x in y] for y in withBlanksBoard]
+
+    return withFlagsBoard
+
 def revealEndBoard(numberMatrix, currentBoard):
+    copyCurrentBoard = currentBoard
     for i in range(len(numberMatrix)):
         for j in range(len(numberMatrix[i])):
             if numberMatrix[i][j] == '!':
-                currentBoard[i][j] = '*'
-    return currentBoard
+                copyCurrentBoard[i][j] = '*'
+    return copyCurrentBoard
 
+
+def printInstructions():
+    print
+    print 'Welcome to Minesweeper!'
+    print
+    print 'To Play:'
+    print 'When prompted provide a row and column number for the tile that you would like to select.'
+    print 'You must select a number that fits within the range of the array.'
+    print "When asked if you want to place a flag, responding 'y' or 'yes' will place a flag."
+    print 'Any other keystroke will instead select the tile, revealing its value.'
+    print
+    print 'To Win:'
+    print 'You must place flags on all the mines and reveal all other tiles.'
+    print
 
 def playGame(height, width, mineCount):
     """ Game function sets up matrices, allows tile selection and flagging,
@@ -158,20 +179,24 @@ def playGame(height, width, mineCount):
     gameRunning   = True
     flagCount     = 0
 
+    printInstructions()
+
     while gameRunning:
         flagCount, wasRevealed = revealClick(height, width, numberMatrix, blankMatrix, flagCount)
         if wasRevealed:
             print tabulateMatrix(blankMatrix)
+            print 'Mines Flagged: {} out of {}'.format(flagCount, mineCount)
             if mineCount == flagCount:
-                gameRunning = False
-                print 'You Won!'
+                if revealWinningBoard(numberMatrix) == blankMatrix:
+                    gameRunning = False
+                    print 'You Won!'
         else:
             gameRunning = False
             print 'Game Over, you hit a mine!'
             print tabulateMatrix(revealEndBoard(numberMatrix, blankMatrix))
 
-    doOver = raw_input('Play again? (yes or no): ').lower()
-    if doOver == 'yes':
+    doOver = raw_input('Play again?').lower()
+    if doOver == 'yes' or doOver == 'y':
         playGame(height, width, mineCount)
 
-playGame(8, 8, 10)
+playGame(3, 3, 1)
