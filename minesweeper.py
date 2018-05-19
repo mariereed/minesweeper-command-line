@@ -101,11 +101,13 @@ def isNumber(input):
         return False
 
 
-def getNextMove(height, width):
+def getNextMove(height, width, numberMatrix):
     """ retrieves user input for tile selection """
     x = isNumber(raw_input('enter a row number 1-{}: '.format(width)))
     y = isNumber(raw_input('enter a column number 1-{}: '.format(height)))
-    return (x, y)
+    if x and y and isValidTile(numberMatrix, x, y):
+        return x, y
+    return False, False
 
 
 def placeFlag():
@@ -118,7 +120,7 @@ def placeFlag():
 
 def revealClick(height, width, numberMatrix, blankMatrix, flagCount):
     """ processes the user input to reveal a tile or place a flag """
-    x, y = getNextMove(height, width)
+    x, y = getNextMove(height, width, numberMatrix)
 
     if x is not False and y is not False:
         if placeFlag():
