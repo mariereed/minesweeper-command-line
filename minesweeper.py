@@ -2,109 +2,109 @@ import random
 from tabulate import tabulate
 
 
-def createBeginnerTrueFalseMatrix(height, width, mineCount):
-    """ creates a 8x8 matrix with 10 true, 54 false randomly placed """
+def create_true_false_matrix(height, width, mine_count):
+    """ creates a {width}x{height} matrix with {mine_count} true randomly placed, the rest false """
 
     # use a list comprehension to initialize a 2d array of "false"
     matrix = [[False for x in range(width)] for y in range(height)]
 
-    while mineCount > 0:
+    while mine_count > 0:
         # generate a random height and width
-        randHeight = random.randint(0, height-1)
-        randWidth  = random.randint(0, width-1 )
+        rand_height = random.randint(0, height-1)
+        rand_width  = random.randint(0, width-1 )
 
         # verify not already a mine
         # place and decrease counter
-        if matrix[randHeight][randWidth] is not True:
-            matrix[randHeight][randWidth] = True
-            mineCount -= 1
+        if matrix[rand_height][rand_width] is not True:
+            matrix[rand_height][rand_width] = True
+            mine_count -= 1
 
     return matrix
 
 
-def isValidTile(matrix, x, y):
+def is_valid_tile(matrix, x, y):
     """ validates that x and y are within grid """
     if x >= 0 and x < len(matrix) and y >= 0 and y < len(matrix[0]):
         return True
     return False
 
 
-def changeIfValid(newMatrix, x, y):
+def change_if_valid(new_matrix, x, y):
     """ validates that x and y are within grid and not a bomb """
-    if isValidTile(newMatrix, x, y) and newMatrix[x][y] != '!':
-        newMatrix[x][y] += 1
+    if is_valid_tile(new_matrix, x, y) and new_matrix[x][y] != '!':
+        new_matrix[x][y] += 1
         return True
     return False
 
 
-def revealIfValid(answerMatrix, currentBoard, x, y):
+def reveal_if_valid(answer_matrix, current_board, x, y):
     """ checks that x,y is a valid tile, not a bomb, not yet selected and reveals the tile """
-    if isValidTile(currentBoard, x, y) and answerMatrix[x][y] != '!' and currentBoard[x][y] == '?':
-        if answerMatrix[x][y] == 0:
-            currentBoard[x][y] = ' '
-            revealNeighbors(answerMatrix, currentBoard, x, y)
+    if is_valid_tile(current_board, x, y) and answer_matrix[x][y] != '!' and current_board[x][y] == '?':
+        if answer_matrix[x][y] == 0:
+            current_board[x][y] = ' '
+            reveal_neighbors(answer_matrix, current_board, x, y)
         else:
-            currentBoard[x][y] = answerMatrix[x][y]
+            current_board[x][y] = answer_matrix[x][y]
         return True
     return False
 
 
-def numberFill(matrix):
+def number_fill(matrix):
     """ generates bomb neighbor counters for each tile """
 
     # fetch matrix of zeros
-    newMatrix = createNewZeroMatrix(matrix)
+    new_matrix = create_new_zero_matrix(matrix)
 
     # increase counter for neighbors of bombs
     for i in range(len(matrix)):
         for j in range(len(matrix[0])):
             if matrix[i][j] is True:
-                newMatrix[i][j] = '!'
-                changeIfValid(newMatrix, i  , j-1)
-                changeIfValid(newMatrix, i  , j+1)
-                changeIfValid(newMatrix, i+1, j  )
-                changeIfValid(newMatrix, i+1, j-1)
-                changeIfValid(newMatrix, i+1, j+1)
-                changeIfValid(newMatrix, i-1, j  )
-                changeIfValid(newMatrix, i-1, j-1)
-                changeIfValid(newMatrix, i-1, j+1)
+                new_matrix[i][j] = '!'
+                change_if_valid(new_matrix, i  , j-1)
+                change_if_valid(new_matrix, i  , j+1)
+                change_if_valid(new_matrix, i+1, j  )
+                change_if_valid(new_matrix, i+1, j-1)
+                change_if_valid(new_matrix, i+1, j+1)
+                change_if_valid(new_matrix, i-1, j  )
+                change_if_valid(new_matrix, i-1, j-1)
+                change_if_valid(new_matrix, i-1, j+1)
 
     # return the matrix with counters and blanks for bombs
-    return newMatrix
+    return new_matrix
 
 
-def createNewZeroMatrix(matrix):
+def create_new_zero_matrix(matrix):
     """ creates a matrix of zeros """
     return [[0 for x in y] for y in matrix]
 
 
-def createNewcurrentBoard(matrix):
+def create_new_current_board(matrix):
     """ generates '?' matrix, this is the matrix visible to the user """
     return [['?' for x in y] for y in matrix]
 
 
-def tabulateMatrix(matrix):
+def tabulate_matrix(matrix):
     """ formats any matrix into uniform table """
     return tabulate(matrix, tablefmt="fancy_grid")
 
 
-def isNumber(input):
+def is_number(input):
     try:
         return int(input) - 1
     except ValueError:
         return False
 
 
-def getNextMove(height, width, answerMatrix):
+def get_next_move(height, width, answer_matrix):
     """ retrieves user input for tile selection """
-    x = isNumber(raw_input('enter a row number 1-{}: '.format(width)))
-    y = isNumber(raw_input('enter a column number 1-{}: '.format(height)))
-    if x is not False and y is not False and isValidTile(answerMatrix, x, y):
+    x = is_number(raw_input('enter a row number 1-{}: '.format(width)))
+    y = is_number(raw_input('enter a column number 1-{}: '.format(height)))
+    if x is not False and y is not False and is_valid_tile(answer_matrix, x, y):
         return x, y
     return False, False
 
 
-def placeFlag():
+def place_flag():
     """ retrieves user input for flag placement """
     flag = raw_input('place a flag?').lower()
     if flag == 'yes' or flag == 'y':
@@ -112,57 +112,57 @@ def placeFlag():
     return False
 
 
-def revealClick(height, width, answerMatrix, currentBoard, flagCount):
+def reveal_click(height, width, answer_matrix, current_board, flag_count):
     """ processes the user input to reveal a tile or place a flag """
-    x, y = getNextMove(height, width, answerMatrix)
+    x, y = get_next_move(height, width, answer_matrix)
 
     if x is not False and y is not False:
-        if placeFlag():
-            currentBoard[x][y] = 'F'
-            flagCount += 1
-            return flagCount, True
-        elif answerMatrix[x][y] == '!':
-            return flagCount, False
-        elif answerMatrix[x][y] == 0:
-            currentBoard[x][y] = ' '
-            revealNeighbors(answerMatrix, currentBoard, x, y)
+        if place_flag():
+            current_board[x][y] = 'F'
+            flag_count += 1
+            return flag_count, True
+        elif answer_matrix[x][y] == '!':
+            return flag_count, False
+        elif answer_matrix[x][y] == 0:
+            current_board[x][y] = ' '
+            reveal_neighbors(answer_matrix, current_board, x, y)
         else:
-            currentBoard[x][y] = answerMatrix[x][y]
-        return flagCount, True
+            current_board[x][y] = answer_matrix[x][y]
+        return flag_count, True
     else:
         print 'Please provide a valid number!'
-        return revealClick(height, width, answerMatrix, currentBoard, flagCount)
+        return reveal_click(height, width, answer_matrix, current_board, flag_count)
 
 
-def revealNeighbors(answerMatrix, currentBoard, x, y):
+def reveal_neighbors(answer_matrix, current_board, x, y):
     """ selects the neighbors of a selection for revealing """
-    revealIfValid(answerMatrix, currentBoard, x  , y-1)
-    revealIfValid(answerMatrix, currentBoard, x  , y+1)
-    revealIfValid(answerMatrix, currentBoard, x+1, y  )
-    revealIfValid(answerMatrix, currentBoard, x+1, y-1)
-    revealIfValid(answerMatrix, currentBoard, x+1, y+1)
-    revealIfValid(answerMatrix, currentBoard, x-1, y  )
-    revealIfValid(answerMatrix, currentBoard, x-1, y-1)
-    revealIfValid(answerMatrix, currentBoard, x-1, y+1)
+    reveal_if_valid(answer_matrix, current_board, x  , y-1)
+    reveal_if_valid(answer_matrix, current_board, x  , y+1)
+    reveal_if_valid(answer_matrix, current_board, x+1, y  )
+    reveal_if_valid(answer_matrix, current_board, x+1, y-1)
+    reveal_if_valid(answer_matrix, current_board, x+1, y+1)
+    reveal_if_valid(answer_matrix, current_board, x-1, y  )
+    reveal_if_valid(answer_matrix, current_board, x-1, y-1)
+    reveal_if_valid(answer_matrix, current_board, x-1, y+1)
 
 
-def revealWinningBoard(matrix):
-    withBlanksBoard = [[' ' if x == 0 else x for x in y] for y in matrix]
-    withFlagsBoard = [['F' if x == '!' else x for x in y] for y in withBlanksBoard]
+def reveal_winning_board(matrix):
+    with_blanks_board = [[' ' if x == 0 else x for x in y] for y in matrix]
+    with_flags_board = [['F' if x == '!' else x for x in y] for y in with_blanks_board]
 
-    return withFlagsBoard
-
-
-def revealEndBoard(answerMatrix, currentBoard):
-    copyCurrentBoard = currentBoard
-    for i in range(len(answerMatrix)):
-        for j in range(len(answerMatrix[i])):
-            if answerMatrix[i][j] == '!':
-                copyCurrentBoard[i][j] = '*'
-    return copyCurrentBoard
+    return with_flags_board
 
 
-def printInstructions():
+def reveal_end_board(answer_matrix, current_board):
+    copy_current_board = current_board
+    for i in range(len(answer_matrix)):
+        for j in range(len(answer_matrix[i])):
+            if answer_matrix[i][j] == '!':
+                copy_current_board[i][j] = '*'
+    return copy_current_board
+
+
+def print_instructions():
     print
     print 'Welcome to Minesweeper!'
     print
@@ -177,34 +177,34 @@ def printInstructions():
     print
 
 
-def playGame(height, width, mineCount):
+def play_game(height, width, mine_count):
     """ Game function sets up matrices, allows tile selection and flagging,
     determines game over, suggests playing again """
 
-    preMatrix     = createBeginnerTrueFalseMatrix(height, width, mineCount)
-    answerMatrix  = numberFill(preMatrix)
-    currentBoard   = createNewcurrentBoard(preMatrix)
+    pre_matrix     = create_true_false_matrix(height, width, mine_count)
+    answer_matrix  = number_fill(pre_matrix)
+    current_board  = create_new_current_board(pre_matrix)
 
-    gameRunning   = True
-    flagCount     = 0
+    game_running   = True
+    flag_count     = 0
 
-    printInstructions()
-    while gameRunning:
-        flagCount, wasRevealed = revealClick(height, width, answerMatrix, currentBoard, flagCount)
-        if wasRevealed:
-            print tabulateMatrix(currentBoard)
-            print 'Mines Flagged: {} out of {}'.format(flagCount, mineCount)
-            if mineCount == flagCount:
-                if revealWinningBoard(answerMatrix) == currentBoard:
-                    gameRunning = False
+    print_instructions()
+    while game_running:
+        flag_count, was_revealed = reveal_click(height, width, answer_matrix, current_board, flag_count)
+        if was_revealed:
+            print tabulate_matrix(current_board)
+            print 'Mines Flagged: {} out of {}'.format(flag_count, mine_count)
+            if mine_count == flag_count:
+                if reveal_winning_board(answer_matrix) == current_board:
+                    game_running = False
                     print 'You Won!'
         else:
-            gameRunning = False
+            game_running = False
             print 'Game Over, you hit a mine!'
-            print tabulateMatrix(revealEndBoard(answerMatrix, currentBoard))
+            print tabulate_matrix(reveal_end_board(answer_matrix, current_board))
 
     doOver = raw_input('Play again? ').lower()
     if doOver == 'yes' or doOver == 'y':
-        playGame(height, width, mineCount)
+        play_game(height, width, mine_count)
 
-playGame(8, 8, 16)
+play_game(8, 8, 16)
