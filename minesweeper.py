@@ -157,6 +157,7 @@ def revealWinningBoard(matrix):
 
     return withFlagsBoard
 
+
 def revealEndBoard(numberMatrix, currentBoard):
     copyCurrentBoard = currentBoard
     for i in range(len(numberMatrix)):
@@ -179,6 +180,7 @@ def printInstructions():
     print 'To Win:'
     print 'You must place flags on all the mines and reveal all other tiles.'
     print
+
 
 def playGame(height, width, mineCount):
     """ Game function sets up matrices, allows tile selection and flagging,
@@ -210,4 +212,4 @@ def playGame(height, width, mineCount):
     if doOver == 'yes' or doOver == 'y':
         playGame(height, width, mineCount)
 
-playGame(4, 4, 5)
+playGame(8, 8, 16)
