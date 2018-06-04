@@ -15,7 +15,7 @@ def create_true_false_matrix(height, width, mine_count):
 
         # verify not already a mine
         # place and decrease counter
-        if matrix[rand_height][rand_width] is not True:
+        if  matrix[rand_height][rand_width] is not True:
             matrix[rand_height][rand_width] = True
             mine_count -= 1
 
@@ -24,14 +24,14 @@ def create_true_false_matrix(height, width, mine_count):
 
 def is_valid_tile(matrix, x, y):
     """ validates that x and y are within grid """
-    if x >= 0 and x < len(matrix) and y >= 0 and y < len(matrix[0]):
+    if  x >= 0 and x < len(matrix) and y >= 0 and y < len(matrix[0]):
         return True
     return False
 
 
 def change_if_valid(new_matrix, x, y):
     """ validates that x and y are within grid and not a bomb """
-    if is_valid_tile(new_matrix, x, y) and new_matrix[x][y] != '!':
+    if  is_valid_tile(new_matrix, x, y) and new_matrix[x][y] != '!':
         new_matrix[x][y] += 1
         return True
     return False
@@ -39,7 +39,7 @@ def change_if_valid(new_matrix, x, y):
 
 def reveal_if_valid(answer_matrix, current_board, x, y):
     """ checks that x,y is a valid tile, not a bomb, not yet selected and reveals the tile """
-    if is_valid_tile(current_board, x, y) and answer_matrix[x][y] != '!' and current_board[x][y] == '?':
+    if  is_valid_tile(current_board, x, y) and answer_matrix[x][y] != '!' and current_board[x][y] == '?':
         if answer_matrix[x][y] == 0:
             current_board[x][y] = ' '
             reveal_neighbors(answer_matrix, current_board, x, y)
@@ -99,7 +99,7 @@ def get_next_move(height, width, answer_matrix):
     """ retrieves user input for tile selection """
     x = is_number(raw_input('enter a row number 1-{}: '.format(width)))
     y = is_number(raw_input('enter a column number 1-{}: '.format(height)))
-    if x is not False and y is not False and is_valid_tile(answer_matrix, x, y):
+    if  x is not False and y is not False and is_valid_tile(answer_matrix, x, y):
         return x, y
     return False, False
 
@@ -107,7 +107,7 @@ def get_next_move(height, width, answer_matrix):
 def place_flag():
     """ retrieves user input for flag placement """
     flag = raw_input('place a flag?').lower()
-    if flag == 'yes' or flag == 'y':
+    if  flag == 'yes' or flag == 'y':
         return True
     return False
 
@@ -116,7 +116,7 @@ def reveal_click(height, width, answer_matrix, current_board, flag_count):
     """ processes the user input to reveal a tile or place a flag """
     x, y = get_next_move(height, width, answer_matrix)
 
-    if x is not False and y is not False:
+    if  x is not False and y is not False:
         if place_flag():
             current_board[x][y] = 'F'
             flag_count += 1
@@ -191,11 +191,11 @@ def play_game(height, width, mine_count):
     print_instructions()
     while game_running:
         flag_count, was_revealed = reveal_click(height, width, answer_matrix, current_board, flag_count)
-        if was_revealed:
+        if  was_revealed:
             print tabulate_matrix(current_board)
             print 'Mines Flagged: {} out of {}'.format(flag_count, mine_count)
-            if mine_count == flag_count:
-                if reveal_winning_board(answer_matrix) == current_board:
+            if  mine_count == flag_count:
+                if  reveal_winning_board(answer_matrix) == current_board:
                     game_running = False
                     print 'You Won!'
         else:
@@ -204,7 +204,7 @@ def play_game(height, width, mine_count):
             print tabulate_matrix(reveal_end_board(answer_matrix, current_board))
 
     doOver = raw_input('Play again? ').lower()
-    if doOver == 'yes' or doOver == 'y':
+    if  doOver == 'yes' or doOver == 'y':
         play_game(height, width, mine_count)
 
 play_game(8, 8, 16)
